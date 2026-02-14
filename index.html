@@ -11,48 +11,51 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     background: linear-gradient(135deg, #ffc0cb, #ffe4ec);
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    transition: 0.3s;
+    overflow: hidden;
 }
 
 h1 {
     font-size: 6vw;
     color: white;
     padding: 0 20px;
-    transition: 0.4s;
     text-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+    transition: 0.3s;
 }
 
 .button-container {
     margin-top: 30px;
     position: relative;
+    width: 100%;
+    height: 200px;
 }
 
 button {
     padding: 12px 25px;
     font-size: 4vw;
-    max-font-size: 18px;
     border: none;
     border-radius: 12px;
-    margin: 10px;
     cursor: pointer;
     transition: 0.3s;
+    position: absolute;
 }
 
 #yes {
     background-color: #ff4da6;
     color: white;
+    left: 30%;
+    top: 60%;
 }
 
 #no {
     background-color: #ff9999;
     color: white;
-    position: absolute;
+    left: 55%;
+    top: 60%;
 }
 
 .big-text {
@@ -98,54 +101,59 @@ button {
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const question = document.getElementById("question");
+const container = document.querySelector(".button-container");
 
-let noScale = 1;
+let noClickIndex = 0;
 let yesScale = 1;
-let noClickCount = 0;
 
 const noMessages = [
-    "lah, salah pencet kah? 😳",
-    "pliss pasti salah pencet lagi 😏",
-    "serius nolak nih? 😭",
-    "terima aja plisss 😔",
-    "jujurrr, udah effort loh 😌",
-    "iyain aja plisss,nanti i beliin coklat dehh 🥹",
-    "Masih ga mau juga? 😩",
-    
+    "hmm? salah pencet kah?? 😳",
+    "ga ga, ga mungkin dongg, pasti salah pencet 😌",
+    "sumpah, beneran nolak nihh? 😭",
+    "iyain aja plisss 😔",
+    "nanti i beliin coklat dehh 😌",
+    "jujurrrr, udah se-effort ini masih nolak? 🥹",
+    "yahhhh 😩",
+    "terakhir nih... yakin banget? 😶"
 ];
 
+function moveNoSafely() {
+    const containerRect = container.getBoundingClientRect();
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+
+    const maxX = containerRect.width - btnWidth;
+    const maxY = containerRect.height - btnHeight;
+
+    const randomX = Math.random() * maxX;
+    const randomY = Math.random() * maxY;
+
+    noBtn.style.left = randomX + "px";
+    noBtn.style.top = randomY + "px";
+}
+
 function chaosEffect() {
-    noClickCount++;
 
-    // Ganti pertanyaan random
-    const randomText = noMessages[Math.floor(Math.random() * noMessages.length)];
-    question.innerHTML = randomText;
-
-    // NO makin kecil
-    noScale -= 0.1;
-    if (noScale < 0.4) {
-        noBtn.style.display = "none";
-    } else {
-        noBtn.style.transform = "scale(" + noScale + ")";
+    // Kalau masih ada teks berikutnya
+    if (noClickIndex < noMessages.length) {
+        question.innerHTML = noMessages[noClickIndex];
+        noClickIndex++;
     }
 
-    // YES makin besar
-    yesScale += 0.15;
+    // YES makin gede
+    yesScale += 0.2;
     yesBtn.style.transform = "scale(" + yesScale + ")";
 
-    // NO pindah random (aman di HP)
-    const maxX = window.innerWidth - 100;
-    const maxY = window.innerHeight - 60;
-    noBtn.style.left = Math.random() * maxX + "px";
-    noBtn.style.top = Math.random() * maxY + "px";
+    moveNoSafely();
 
-    if (noClickCount >= 6) {
-        autoYes();
+    // Kalau sudah sampai akhir
+    if (noClickIndex >= noMessages.length) {
+        setTimeout(autoYes, 800);
     }
 }
 
 function autoYes() {
-    question.innerHTML = "YESSS, i tau kalo u pasti mau 😌💕";
+    question.innerHTML = "YESSS, i tau kok kalo u pasti mau 😌💕";
     celebrate();
 }
 
@@ -180,7 +188,7 @@ function createHearts() {
 
 function launchConfetti() {
     const colors = ["#ff4da6", "#ffd700", "#00e5ff", "#7cff00", "#ff6600"];
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < 100; i++) {
         const confetti = document.createElement("div");
         confetti.classList.add("confetti");
         confetti.style.left = Math.random() * 100 + "vw";
